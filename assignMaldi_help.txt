@@ -1,0 +1,207 @@
+#main
+***INPUT***
+>Directory with exported spectra in text format
+ - In your vendor software window, calibrate and smooth the data if required.
+ - Export your spectra. [In flexAnalysis do File->Export->Mass Spectrum...]  This should result in a .txt file with columns of mass and intensity
+ - Put all related exported .txt files in one folder. [ie. Sample/spot1.txt, spot2.txt, spot3.txt] They will be processed and averaged together.
+ - Browse to the folder and select it.
+
+>Glycan database file
+ - Make a .txt file with a list of all the possible glycans in your sample in shorthand format (i.e. H5N2)
+ - Click the "Make Glycan Database" button to convert your shorthand into longhand and to calculate the mass and chemical composition
+ - Browse to the new library file and select it.
+
+>Make Glycan Database button - opens up the database maker window.
+
+***PROCESSING OPTIONS***
+>Zero baseline - pulls intensity down to baseline.  
+ - Check box on left to use
+
+>Smooth Data - When peaks are jagged, it can cause issues with peak picking.  Smoothing the data can help. 
+ - This is based on a savitzky_golay filter.  More information can be found in the comments in pickpk_lmp.py
+ - Check box on left to use.
+
+>Calibrate Spectra - adjusts X-axis based on two points 
+ - Choose two points in the spectrum, one high and one low, that you know the correct masses for.
+ - Enter the current mass and the correct mass for each point.
+ - Check box on left to use
+
+>Error(dalton) - glycan assignments are matched to peaks +/- this value.
+
+>Assignment must be found in at least this many files to be real.
+ - If you have more than one spectrum, requiring that every assignment be in more than one spectrum will help filter out spurious peaks
+
+>z-score cutoff for noise reduction
+ - The left side of the spectrum is typically noisier than the right.  
+ - If the same baseline is used across the entire spectrum, lower intensity, higher mass peaks might be missed.
+ - AssignMALDI uses a moving average to detect the noise peaks.  
+ - For each section of the spectrum, an average and standard deviation are calculated.  
+ - Z = 1 standard deviation.  If Z=3 then only peaks at least three standard deviations above the average will be selected.  The optimal value used for Z depends on the data.
+ - If assignMALDI is missing peaks this could be due to a Z-score that's too high.
+
+>Check z-score.
+ - Checking this box allows the user to see how well the Z-score chosen works.  
+ - After hitting 'Assign', a spectrum is shown with picked peaks marked as red dots.  All peaks of interest should have a red dot. 
+ - It’s okay if a few noise peaks are selected, but it will increase processing time.  All peaks of interest should be selected.  
+ - The zoom button (magnifying glass) on the top of the window can be used to zoom in and inspect the baseline.
+ - UNCHECK this option to assign the data!
+
+>Look for mod like missed permethylation
+ - Incomplete labeling happens. You can check for it using this option.
+ - Input the difference you expect using the 'Edit Defaults' button if needed.
+ - Choose the change that applies to your sample under the 'Choose none or more' button.  
+ - Only one mod will be sought for each glycan, so if you could have two changes on one glycan, make a separate entry with both changes (ie. -28Da for two missing permethylations)
+
+***OUTPUT OPTIONS***
+>Limit M/Z axis to:
+ - Enter the minimum and maximum values to be shown in the output spectra
+ - Check the box to apply the limits
+
+>Use shapes
+ - By default, assignments are shown in text.
+ - Selecting use shapes with show the assignments as a vertical row of shapes with the number of each monosaccharide inside the shapes.
+ - Shapes and colors can be edited under 'Set shapes and colors'.
+   - Sugars should match sugar abbreviations used in the glycan library (i.e. HexNAc)
+   - Labels can be indicated with an asterisk followed by the first letter of the label as used in the glycan library produced in the database maker
+     for example, if amidated sialic acid is output as NeuAc1*a* in the library, under sugar put *a.  Leave off the NeuAc
+ - Processing is slightly slower with shapes
+
+>Show masses
+ - By default, masses for each assignment are not shown.
+ - Choosing this will list the mass with the assignment
+ - The mass under the cursor is always shown as X,Y coordinates in the upper right hand corner of the spectral window
+
+>Save N-glycans only
+ - AssignMALDI was designed around N-glycans which sometimes have contaminating oligohexoses 
+ - checking this filters out assignments that don't have at least 2 HexNAcs in the output files and tables
+ - non N-glycan assignments will still appear in the spectra window
+
+>What assignments should be in output file?
+ - Only Assigned: only peaks with assignments will be in the output file.  
+   If 'Save N-glycans only' is selected, then it will be only assigned N-glycans.  The percent abundance calculation will include only N-glycans as well.
+   If you are looking at multiple samples and planning to align them in excel, for example, you’ll probably want the next option.
+ - Everything: All glycans in the library file, including background hexoses
+   Unassigned glycans will have 0's in place of intensities
+   If 'Save N-glycans only' is selected, only sugars with two or more HexNAcs will be listed
+ 
+***BUTTONS***
+>Assign - runs the program
+
+>Edit Previous - opens a previously processed dataset
+
+>Help - opens this file.
+
+
+#dbmaker
+***OPTIONS***
+>Preparation - describes how the glycans were obtained for example, enzyme-released (from a protein)
+
+>Modification - describes the glycan labels.  
+ - Some labels are on the reducing end, some on every glycan (such as permethylation), and some on specific sugars so that you can have more than one label per glycan
+ - Choose all the labels that are appropriate.  More labels can be added under "Edit Defaults".
+
+>Ion - choose the ion used.
+ - You can specify the number of ions, but assignMaldi assumes one ion (Z=1).
+----------------------------------------------------------
+>Edit Defaults Buttons - Each user option has defaults that can be modified as needed. The windows follow the same design but change depending on the type of information needed. 
+
+-Name - appears in the list of options on the dbmaker window 
+
+-symbols - used by the program.  For monosaccharides, its the one-letter short-hand abbreviation for each sugar
+
+-where - describes where the modification takes place
+ - start = reducing end
+ - Me = all -OH groups that are affected by permethylation
+ - S = sialic acid, for example. H would be hexose.
+
+-number_of_each_atom  - describes the net change to the protein, NOT the composition of the label.  
+ - for example, permethylation adds C1H3 but the protein loses an H, so the net change is C1H2
+ - Me is the number of OH groups modified by permethylation reactions.
+
+-Add Row - adds a new row. 
+
+-To REMOVE a row, just delete the name and hit Save
+--------------------------------------------------------------
+More Defaults:
+
+>AtomMasses button - masses used to calculate glycan masses.
+
+>Monosaccharides - All possible sugars in the library.  Symbols are used in shorthand entry.  You could theoretically use this for molecules other than sugars.
+
+>Output order - Order sugars will be printed in longhand.  For example, all sugars with HexNAc will have the HexNAc sugar last in the label because it is last in this list.
+ - To change the order, select a sugar and then push '^' or 'v'
+
+***GLYCAN INPUT***
+- Glycans can be entered either singly or in a list.
+- Glycans are entered in shorthand format
+
+>Single Entry: enter the glycan in shorthand format (ie. H5N2)
+
+>Calculate Button: will add ions and labels to the single entry and output the full name, mass, and chemical formula to Results
+
+>Results: results of pressing "Calculate"
+
+>Add to File button: adds results in Results box to the 'New Database File'.
+
+>Multiple entry file: The file with a list of glycans in shorthand format
+
+>New Database File: The file with the longhand results.
+
+>Write Database Button: converts glycans in the Multiple Entry File to longhand format and saves them in the New Database File.
+
+#Spectra Window
+The spectra window displays the assignments found in all the spectra in the initial folder. 
+ - The C12 peak of each assignment is indicated with a red dot.
+ - Isotopic profiles are indicated with blue lines.  The lines and calculated area are adjusted for overlap.
+ - Calculated isotopic profiles may not exactly match the experimental, but the peak heights should follow the same pattern.  They are meant to help the user discern the correctness of the assignment.   
+ - In some cases the isotopic profiles may appear lower than the drawn peaks even though there doesn't appear to be an overlap.  This is more likely when the peaks of interest are close to the noise.  It can be corrected manually by unpicking, then picking the peak at the proper height. More about the pick peak button is below.  
+
+The following buttons are at the top of the spectra window.
+> Home button (house) Resets to the original view
+
+> Go back to previous view (Big left arrow).  For example, if you zoomed in, it will zoom back out.
+
+> Go forward to next view (Big right arrow) Only works if you came from a previous view.
+
+> Pan axis with mouse (Crossed arrows).  This is a default feature of the software library which some users may prefer for scrolling.
+
+> Zoom button (magnifying glass) will zoom in on all three spectra at once.  In conjunction with the pan left (<) and pan right (>), this will enable one to carefully inspect the whole spectrum.
+ - AssignMALDI attempts to account for overlap but depending on the noise, it can be challenging for weak peaks.
+ - If something is so overlapped it doesn't have a noticeable isotopic pattern, consider not using that assignment.
+
+> Configure subplots (button with sliders) This default button allows the user to adust the white space around the displayed spectra prior to saving.
+
+> Save the figure (black floppy disk) Saves a .png file of the displayed spectra.
+
+> Save the assignment changes (Blue floppy disk or 'Save') updates the output tables with changes the user makes to the spectra  
+
+>Zoom in 10% (magnifying glass with a '+' or '+')
+
+>Zoom out 10% (magnigying glass with a '-' or '-')
+
+>Zoom up ('^') Decreases the y-axis by 20%, effectively zooming in on lower intensity peaks.
+
+>Zoom down ('v') Increases the y-axis by 20% so that larger peaks come into view.
+
+>Pan left ('<') moves left along the X-axis, keeping the same zoom.
+
+>Pan right ('>') moves right along the X-axis, keeping the same zoom.
+
+>Select or unselect picked peaks (peak with an arrow or 'P') allows the user to modify the assignments shown in each spectrum.  The user can:
+ - click on an assigned peak to remove it
+ - click on an unassigned peak to see if any assignments are available in the library or if the program can 'guess' an assignment.
+ - suggested assignments can be added to the spectrum by selecting 'Assign' in the pop-up window.
+ - NOTE: Guesses are computer-generated extrapolations from the glycans in the library.  The suggested compositions may not exist.  Caution is advised.
+ - If 'glygen_database.txt' is present and the guessed glycan is present, a 'Y' will appear to the right.  
+   If the guessed glycan is not present in the library a 'n' will appear.  
+   If the library is not present, no letter will appear.
+   The glygen library was downloaded from https://data.glygen.org in 2022 after a search for human glycans.
+   You can use your own library, just make sure it is in the same format and replace the file in the AssignMALDI folder with one of the exact same name including .txt instead of .csv.
+ 
+>AvgPlot displays a bar chart of the average percent abundance and standard deviation of the assigned peaks based on the area of the isotopic windows.  
+
+#Average Plot
+The average plot displays the average percent abundance of the assignments found across all the spectra shown in the spectra window.  This window is useful both for publication purposes and as another way to inspect the data.  Peaks with large standard deviations suggest issues with assignments that should be inspected.  Multiple peaks resulting from preparation problems like incomplete permethylation (mods chosen in the main assignMaldi window) are treated as one assignment and summed.  If the user chooses not to show background hexoses in the output files, they will not be shown here.
+ 
+The buttons at the top have the same functions as the previous window except for the 'Sort' button.  The initial display is ordered by m/z.  Users may prefer to present the data by complexity, for example.  Sorting by HexNAc, then dHex, than NeuAc, then Hex, will result in high mannose glycans to the left and complex glycans to the far right.
+

@@ -1,0 +1,64 @@
+#atomMass
+atom	mass
+C	12.0
+H	1.0078250
+N	14.0030740
+O	15.9949146
+P	30.9737634
+S	31.9720718
+D	2.0141018
+Na	22.989768
+
+#monosaccharides
+>symbols are not case-sensitive and are alphabetic characters
+>Me is the number of methyl groups added in a permethylation reaction
+sugar symbol number_of_each_atom
+Hex	h	C=6	H=10	O=5	Me=3
+dHex	d	C=6	H=10	O=4	Me=2
+HexNAc	n	C=8	H=13	N=1	O=5	Me=3
+HexA	a	C=6	H=8	O=6	Me=3
+Pc	p	C=5	H=12	N=1	O=3	P=1	Me=0
+NeuAc	s	C=11	H=17	N=1	O=8	Me=5
+NeuGc	g	C=11	H=17	N=1	O=9	Me=6
+
+#modifications
+>Frequency is always or sometimes
+>Where is label location. Use start(for reducing end) or sugar symbols or Me
+>Me is for OH groups sensitive to permethylation
+>The first letter of sugar-specific labels will be used to abbreviate - name accordingly.
+name where frequency number_of_each_atom
+None	start	always	H=0
+AEAB	start	always	C=9	H=13	N=3
+Permethylation	Me	always	C=1	H=2
+Esterification	S	sometimes	C=2	H=4
+pT	S	sometimes	C=7	H=6	N=7	O=-1
+amidation	S	sometimes	H=1	N=1	O=-1
+dimethylamidation	S	sometimes	C=2	H=5	N=1	O=-1
+2AA	start	always	C=7	H=7	N=1	O=1
+
+#preparation
+>Me is the number of methyl groups added in a permethylation reaction
+name symbol number_of_each_atom
+Bound	bound	H=0
+Enzyme-Released	enz	H=2	O=1	Me=2
+Beta-Eliminated	beta	H=4	O=1	Me=3
+Free-floating	frfl	H=2	O=1	Me=2
+Base-hydrolyzed	bh	H=2	O=1	Me=2
+
+#adductIons
+ion	mass
+None	0.00
+Na	22.989769
+K	38.963708
+H	1.0078250
+
+#outputOrder
+sugar
+NeuGc
+NeuAc
+Pc
+HexA
+dHex
+Hex
+HexNAc
+

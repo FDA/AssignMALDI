@@ -1,0 +1,29 @@
+#atomMass
+atom	mass
+C	12.0
+H	1.0078250
+N	14.0030740
+O	15.9949146
+P	30.9737634
+S	31.9720718
+D	2.0141018
+
+
+#modifications
+>looks for peaks - expected peaks or + if positive
+>for issues such as incomplete permethylation
+name number_of_each_atom
+-14D	C=-1	H=-2
+-28D	C=-2	H=-4
+
+#Shapes
+sugar	shape	color
+HexNAc	square	blue
+Hex	circle	green
+dHex	triangle	red
+NeuAc	diamond	darkorchid
+NeuGc	diamond	lightskyblue
+*a	diamond	pink
+*d	diamond	darkorchid
+HexA	triangle_left	white
+
