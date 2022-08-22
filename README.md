@@ -1,4 +1,14 @@
-AssignMALDI README file 22-July-2022
+AssignMALDI README file 19-August-2022
+
+ABOUT: 
+AssignMALDI is a python program to automatically pick and assign the composition of 
+native and derivatized (labeled) glycans in MALDI-TOF spectra.
+
+FEATURES: 
+- Glycan database maker with user-editable labels and the ability to apply more than one label per glycan
+- Peak intensity averaging across multiple spectra
+- Automatic assignment results output in an editable multi-spectra window
+- Data output in publication ready formats.
 
 PREREQUISITES
  - Latest version of Python 3.x
